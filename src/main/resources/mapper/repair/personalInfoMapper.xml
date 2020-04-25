@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Welcome to use the TableGo Tools.
+    
+    http://vipbooks.iteye.com
+    http://blog.csdn.net/vipbooks
+    http://www.cnblogs.com/vipbooks
+    
+    Author:bianj
+    Email:edinsker@163.com
+    Version:5.8.8
+-->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- PERSONAL_INFO -->
+<mapper namespace="com.alfred.bus.mapper.personalInfo">
+    <!-- 结果映射 -->
+    <resultMap id="personalInfoMap" type="PersonalInfo">
+        <id column="USER_ID" property="userId" jdbcType="VARCHAR" />
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR" />
+        <result column="SEX" property="sex" jdbcType="VARCHAR" />
+        <result column="BIRTHDAY" property="birthday" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="TEL_NUM" property="telNum" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <!-- 表所有字段 -->
+    <sql id="allColumns">
+        USER_ID, REAL_NAME, SEX, BIRTHDAY, EMAIL, ADDRESS, 
+        TEL_NUM, REMARK
+    </sql>
+    
+    <!-- 查询所有数据 -->
+    <select id="findPersonalInfoAll" resultMap="personalInfoMap">
+        SELECT
+        <include refid="allColumns" />
+        FROM PERSONAL_INFO
+    </select>
+    
+    <!-- 根据条件查询数据 -->
+    <select id="findPersonalInfoByCondition" resultMap="personalInfoMap" parameterType="map">
+        SELECT
+        <include refid="allColumns" />
+        FROM PERSONAL_INFO WHERE 1 = 1
+        <if test="realName != null and realName != ''">
+            AND REAL_NAME LIKE CONCAT('%',#{realName},'%')
+        </if>
+        <if test="sex != null and sex != ''">
+            AND SEX LIKE CONCAT('%',#{sex},'%')
+        </if>
+        <if test="birthday != null and birthday != ''">
+            AND BIRTHDAY LIKE CONCAT('%',#{birthday},'%')
+        </if>
+        <if test="email != null and email != ''">
+            AND EMAIL LIKE CONCAT('%',#{email},'%')
+        </if>
+        <if test="address != null and address != ''">
+            AND ADDRESS LIKE CONCAT('%',#{address},'%')
+        </if>
+        <if test="telNum != null and telNum != ''">
+            AND TEL_NUM LIKE CONCAT('%',#{telNum},'%')
+        </if>
+        <if test="remark != null and remark != ''">
+            AND REMARK LIKE CONCAT('%',#{remark},'%')
+        </if>
+    </select>
+    
+    <!-- 根据主键查询数据 -->
+    <select id="findPersonalInfoByIds" resultMap="personalInfoMap" parameterType="list">
+        SELECT
+        <include refid="allColumns" />
+        FROM PERSONAL_INFO WHERE USER_ID IN
+        <foreach collection="list" index="index" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+    
+    <!-- 插入数据 -->
+    <insert id="insertPersonalInfo" parameterType="map">
+        INSERT INTO PERSONAL_INFO (<include refid="allColumns" />)
+        VALUES (
+            #{userId},
+            #{realName},
+            #{sex},
+            #{birthday},
+            #{email},
+            #{address},
+            #{telNum},
+            #{remark}
+        )
+    </insert>
+    
+    <!-- 批量插入数据 -->
+    <insert id="insertPersonalInfos" parameterType="list">
+        INSERT INTO PERSONAL_INFO (<include refid="allColumns" />)
+        VALUES (
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+                #{item.userId},
+                #{item.realName},
+                #{item.sex},
+                #{item.birthday},
+                #{item.email},
+                #{item.address},
+                #{item.telNum},
+                #{item.remark}
+            )
+        </foreach>
+    </insert>
+    
+    <!-- 修改数据 -->
+    <update id="updatePersonalInfo" parameterType="map">
+        UPDATE PERSONAL_INFO SET
+            REAL_NAME = #{realName},
+            SEX = #{sex},
+            BIRTHDAY = #{birthday},
+            EMAIL = #{email},
+            ADDRESS = #{address},
+            TEL_NUM = #{telNum},
+            REMARK = #{remark}
+        WHERE USER_ID = #{userId}
+    </update>
+    
+    <!-- 批量修改数据 -->
+    <update id="updatePersonalInfos" parameterType="list">
+        <foreach collection="list" index="index" item="item" separator=";">
+            UPDATE PERSONAL_INFO SET
+                REAL_NAME = #{item.realName},
+                SEX = #{item.sex},
+                BIRTHDAY = #{item.birthday},
+                EMAIL = #{item.email},
+                ADDRESS = #{item.address},
+                TEL_NUM = #{item.telNum},
+                REMARK = #{item.remark}
+            WHERE USER_ID = #{item.userId}
+        </foreach>
+    </update>
+    
+    <!-- 根据主键删除数据 -->
+    <delete id="deletePersonalInfoById" parameterType="string">
+        DELETE FROM PERSONAL_INFO WHERE USER_ID = #{userId}
+    </delete>
+    
+    <!-- 根据主键批量删除数据 -->
+    <delete id="deletePersonalInfoByIds" parameterType="list">
+        DELETE FROM PERSONAL_INFO WHERE USER_ID IN
+        <foreach collection="list" index="index" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>

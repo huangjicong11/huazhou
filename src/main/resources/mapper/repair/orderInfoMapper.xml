@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Welcome to use the TableGo Tools.
+    
+    http://vipbooks.iteye.com
+    http://blog.csdn.net/vipbooks
+    http://www.cnblogs.com/vipbooks
+    
+    Author:bianj
+    Email:edinsker@163.com
+    Version:5.8.8
+-->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ORDER_INFO -->
+<mapper namespace="com.alfred.bus.mapper.orderInfo">
+    <!-- 结果映射 -->
+    <resultMap id="orderInfoMap" type="OrderInfo">
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="PLATE" property="plate" jdbcType="VARCHAR" />
+        <result column="TROUBLE_NAME" property="troubleName" jdbcType="VARCHAR" />
+        <result column="TROUBLE_CODE" property="troubleCode" jdbcType="VARCHAR" />
+        <result column="CONTACT" property="contact" jdbcType="VARCHAR" />
+        <result column="CONTACT_WAY" property="contactWay" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="LONG_TIME" property="longTime" jdbcType="BIGINT" />
+        <result column="CREART_TIME" property="creartTime" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="INTEGER" />
+    </resultMap>
+    
+    <!-- 表所有字段 -->
+    <sql id="allColumns">
+        ID, USER_ID, USER_NAME, PLATE, TROUBLE_NAME, TROUBLE_CODE, 
+        CONTACT, CONTACT_WAY, REMARK, LONG_TIME, CREART_TIME, STATUS
+    </sql>
+    
+    <!-- 查询所有数据 -->
+    <select id="findOrderInfoAll" resultMap="orderInfoMap">
+        SELECT
+        <include refid="allColumns" />
+        FROM ORDER_INFO
+    </select>
+    
+    <!-- 根据条件查询数据 -->
+    <select id="findOrderInfoByCondition" resultMap="orderInfoMap" parameterType="map">
+        SELECT
+        <include refid="allColumns" />
+        FROM ORDER_INFO WHERE 1 = 1
+        <if test="userId != null and userId != ''">
+            AND USER_ID LIKE CONCAT('%',#{userId},'%')
+        </if>
+        <if test="userName != null and userName != ''">
+            AND USER_NAME LIKE CONCAT('%',#{userName},'%')
+        </if>
+        <if test="plate != null and plate != ''">
+            AND PLATE LIKE CONCAT('%',#{plate},'%')
+        </if>
+        <if test="troubleName != null and troubleName != ''">
+            AND TROUBLE_NAME LIKE CONCAT('%',#{troubleName},'%')
+        </if>
+        <if test="troubleCode != null and troubleCode != ''">
+            AND TROUBLE_CODE LIKE CONCAT('%',#{troubleCode},'%')
+        </if>
+        <if test="contact != null and contact != ''">
+            AND CONTACT LIKE CONCAT('%',#{contact},'%')
+        </if>
+        <if test="contactWay != null and contactWay != ''">
+            AND CONTACT_WAY LIKE CONCAT('%',#{contactWay},'%')
+        </if>
+        <if test="remark != null and remark != ''">
+            AND REMARK LIKE CONCAT('%',#{remark},'%')
+        </if>
+        <if test="longTime != null">
+            AND LONG_TIME = #{longTime}
+        </if>
+        <if test="creartTime != null and creartTime != ''">
+            AND CREART_TIME LIKE CONCAT('%',#{creartTime},'%')
+        </if>
+        <if test="status != null">
+            AND STATUS = #{status}
+        </if>
+    </select>
+    
+    <!-- 根据主键查询数据 -->
+    <select id="findOrderInfoByIds" resultMap="orderInfoMap" parameterType="list">
+        SELECT
+        <include refid="allColumns" />
+        FROM ORDER_INFO WHERE ID IN
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    
+    <!-- 插入数据 -->
+    <insert id="insertOrderInfo" parameterType="map">
+        INSERT INTO ORDER_INFO (<include refid="allColumns" />)
+        VALUES (
+            #{id},
+            #{userId},
+            #{userName},
+            #{plate},
+            #{troubleName},
+            #{troubleCode},
+            #{contact},
+            #{contactWay},
+            #{remark},
+            #{longTime},
+            #{creartTime},
+            #{status}
+        )
+    </insert>
+    
+    <!-- 批量插入数据 -->
+    <insert id="insertOrderInfos" parameterType="list">
+        INSERT INTO ORDER_INFO (<include refid="allColumns" />)
+        VALUES (
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+                #{item.id},
+                #{item.userId},
+                #{item.userName},
+                #{item.plate},
+                #{item.troubleName},
+                #{item.troubleCode},
+                #{item.contact},
+                #{item.contactWay},
+                #{item.remark},
+                #{item.longTime},
+                #{item.creartTime},
+                #{item.status}
+            )
+        </foreach>
+    </insert>
+    
+    <!-- 修改数据 -->
+    <update id="updateOrderInfo" parameterType="map">
+        UPDATE ORDER_INFO SET
+            USER_ID = #{userId},
+            USER_NAME = #{userName},
+            PLATE = #{plate},
+            TROUBLE_NAME = #{troubleName},
+            TROUBLE_CODE = #{troubleCode},
+            CONTACT = #{contact},
+            CONTACT_WAY = #{contactWay},
+            REMARK = #{remark},
+            LONG_TIME = #{longTime},
+            CREART_TIME = #{creartTime},
+            STATUS = #{status}
+        WHERE ID = #{id}
+    </update>
+    
+    <!-- 批量修改数据 -->
+    <update id="updateOrderInfos" parameterType="list">
+        <foreach collection="list" index="index" item="item" separator=";">
+            UPDATE ORDER_INFO SET
+                USER_ID = #{item.userId},
+                USER_NAME = #{item.userName},
+                PLATE = #{item.plate},
+                TROUBLE_NAME = #{item.troubleName},
+                TROUBLE_CODE = #{item.troubleCode},
+                CONTACT = #{item.contact},
+                CONTACT_WAY = #{item.contactWay},
+                REMARK = #{item.remark},
+                LONG_TIME = #{item.longTime},
+                CREART_TIME = #{item.creartTime},
+                STATUS = #{item.status}
+            WHERE ID = #{item.id}
+        </foreach>
+    </update>
+    
+    <!-- 根据主键删除数据 -->
+    <delete id="deleteOrderInfoById" parameterType="string">
+        DELETE FROM ORDER_INFO WHERE ID = #{id}
+    </delete>
+    
+    <!-- 根据主键批量删除数据 -->
+    <delete id="deleteOrderInfoByIds" parameterType="list">
+        DELETE FROM ORDER_INFO WHERE ID IN
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
